@@ -34,6 +34,12 @@ describe('timeline', function() {
 			timeline.add('hi');
 			expect(timeline.events.length).toEqual(1);
 		});
+		
+		it('accepts multiple arguments', function() {
+			expect(timeline.events.length === 0).toBeTruthy();
+			timeline.add(['hi','there']);
+			expect(timeline.events.length).toEqual(2);
+		});
 	});
 	
 	describe('timeline.play', function() {
@@ -70,6 +76,24 @@ describe('timeline', function() {
 				expect(happened).toBeFalsy();
 				checks++;
 			},50);
+		});
+		
+		it('can handle multiple events', function(done) {
+			var message = '';
+			timeline.add([{
+				at:100,
+				fn: function() {
+					message += 'tick';
+				}
+			}, {
+				at:100,
+				fn: function() {
+					message += ' tock';
+					expect(message).toEqual('tick tock');
+					done();
+				}
+			}]);
+			timeline.run();
 		});
 	});
 });

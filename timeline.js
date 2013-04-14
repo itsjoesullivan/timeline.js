@@ -16,8 +16,12 @@ Timeline.prototype.position = function(pos) {
 	return this._position;
 };
 
-Timeline.prototype.add = function(event) {
-	this.events.push(event);
+Timeline.prototype.add = function(ev) {
+	if(_(ev).isArray()) {
+		this.events = this.events.concat(ev);
+	} else {
+		this.events.push(ev);
+	}
 };
 
 Timeline.prototype.run = function() {
