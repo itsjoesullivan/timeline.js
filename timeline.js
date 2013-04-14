@@ -7,6 +7,7 @@ var now = function() {
 var Timeline = function () {
 	this._position = 0;
 	this.events = [];
+	this.queue = [];
 };
 
 Timeline.prototype.position = function(pos) {
@@ -35,7 +36,11 @@ Timeline.prototype.run = function() {
 	});
 	//trigger it.
 	onDeck.forEach(function(ev) {
-		setTimeout(ev.fn,ev.at-pos);
+		var timeout = setTimeout(ev.fn,ev.at-pos);
+		self.queue.push({
+			timeout: timeout,
+			at: ev.at
+		});
 	});
 	var left = _(this.events).some(function(ev) {
 		return ev.at > pos+interval;
@@ -46,6 +51,12 @@ Timeline.prototype.run = function() {
 			self.run();
 		},interval);
 	}
-}
+};
+
+Timeline.prototype.stop = function() {
+	this.queue.forEach(function(item) {
+		clearTimeout(item.timeout);
+	});
+};
 
 module.exports = Timeline;
