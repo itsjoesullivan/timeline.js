@@ -36,5 +36,41 @@ describe('timeline', function() {
 		});
 	});
 	
+	describe('timeline.play', function() {
+		
+		var now = function() {
+			return new Date().getTime();
+		}
+		
+		var happened = false;
+		
+		beforeEach(function() {
+			timeline = new Timeline();
+		});
+		
+		it('will trigger an event no more than 105ms after 0 if started at 0 and an event exists at 100ms', function(done) {
+			var checks = 0;
+			var startTime;
+			timeline.add({
+				at: 100,
+				fn: function() {
+					happened = true;
+					expect(happened).toBeTruthy();
+					expect(checks).toBe(2);
+					var duration = now() - startTime;
+					expect(duration > 95 && duration < 105).toBeTruthy();
+					done();
+				}
+			});
+			timeline.run();
+			startTime = new Date().getTime();
+			expect(happened).toBeFalsy();
+			checks++;
+			setTimeout(function() {
+				expect(happened).toBeFalsy();
+				checks++;
+			},50);
+		});
+	});
 });
 
