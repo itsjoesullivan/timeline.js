@@ -76,6 +76,7 @@ describe('timeline', function() {
 				expect(happened).toBeFalsy();
 				checks++;
 			},50);
+			
 		});
 		
 		it('can handle multiple events', function(done) {
@@ -94,6 +95,31 @@ describe('timeline', function() {
 				}
 			}]);
 			timeline.run();
+		});
+	});
+	
+	describe('timeline.stop', function() {
+		it('cancels queued up events', function(done) {
+			var message = '';
+			timeline.add([{
+				at: 100,
+				fn: function() {
+					message += 'tick';
+				}
+			},{
+				at: 500,
+				fn: function() {
+					message += ' tock';
+				}
+			}]);
+			timeline.run();
+			setTimeout(function() {
+				timeline.stop();
+			},200);
+			setTimeout(function() {
+				expect(message).toBe('tick');
+				done();
+			},600);
 		});
 	});
 });
